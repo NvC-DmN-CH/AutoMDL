@@ -433,8 +433,6 @@ class AutoMDLOperator(bpy.types.Operator):
         if(context_mode_snapshot != "null"):
             bpy.ops.object.mode_set(mode=context_mode_snapshot)
         
-            
-bpy.utils.register_class(AutoMDLOperator)
 
 
 class AutoMDLPanel(bpy.types.Panel):
@@ -649,8 +647,8 @@ def register():
         bpy.types.Scene.studiomdl_manual_input = bpy.props.StringProperty(name="", default="", description="Path to the studiomdl.exe file", update=onGameManualTextInputChanged)
         onGameManualTextInputChanged(None, bpy.context) # need to update once to let the program know of the default value
     
+    bpy.utils.register_class(AutoMDLOperator)
     bpy.utils.register_class(AutoMDLPanel)
-#   bpy.utils.register_class(AutoMDLOperator) # why it errors out when i do this?
     
 def unregister():
     bpy.utils.unregister_class(AutoMDLOperator)
