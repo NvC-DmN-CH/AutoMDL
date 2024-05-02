@@ -671,9 +671,6 @@ def unregister():
     del bpy.types.Scene.cdmaterials_list
     del bpy.types.Scene.cdmaterials_list_active_index
 
-if __name__ == "__main__":
-    register()
-    
 
 def checkVisMeshHasMesh(context):
     vis_mesh_obj = context.scene.vis_mesh
