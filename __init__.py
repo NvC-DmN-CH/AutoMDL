@@ -553,6 +553,7 @@ classes = [
 class_register, class_unregister = bpy.utils.register_classes_factory(classes)
 
 def register():
+    bpy.utils.register_module(__name__)
     bpy.types.Scene.surfaceprop_text_input = bpy.props.StringProperty(name="", default="")
     
     bpy.types.Scene.mass_text_input = bpy.props.StringProperty(name="", default="35", description="Mass in kilograms (KG)\nBy default, the Player can +USE pick up 35KG max.\nThe gravgun can pick up 250KG max.\nThe portal gun can pick up 85KG max", update=onMassTextInputChanged)
@@ -650,6 +651,7 @@ def register():
     bpy.utils.register_class(AutoMDLPanel)
     
 def unregister():
+    bpy.utils.unregister_module(__name__)
     bpy.utils.unregister_class(AutoMDLOperator)
     bpy.utils.unregister_class(AutoMDLPanel)
     del bpy.types.Scene.surfaceprop_text_input
@@ -780,3 +782,7 @@ def is_float(value):
       return True
   except:
       return False
+
+
+if __name__ == "__main__":
+    register()
