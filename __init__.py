@@ -547,13 +547,19 @@ class CdMaterialsPropGroup(bpy.types.PropertyGroup):
 
 
 classes = [
+    AutoMDLOperator,
+    AutoMDLPanel,
     CdMaterialsPropGroup
 ]
 
 class_register, class_unregister = bpy.utils.register_classes_factory(classes)
 
 def register():
-    bpy.utils.register_module(__name__)
+
+    from bpy.utils import register_class
+    for cls in classes:
+        register_class(cls)
+    
     bpy.types.Scene.surfaceprop_text_input = bpy.props.StringProperty(name="", default="")
     
     bpy.types.Scene.mass_text_input = bpy.props.StringProperty(name="", default="35", description="Mass in kilograms (KG)\nBy default, the Player can +USE pick up 35KG max.\nThe gravgun can pick up 250KG max.\nThe portal gun can pick up 85KG max", update=onMassTextInputChanged)
@@ -626,7 +632,6 @@ def register():
     )
     
     # cdmaterials list
-    class_register()
     bpy.types.Scene.cdmaterials_list = bpy.props.CollectionProperty(type=CdMaterialsPropGroup)
     bpy.types.Scene.cdmaterials_list_active_index = bpy.props.IntProperty()
     
@@ -647,13 +652,12 @@ def register():
         bpy.types.Scene.studiomdl_manual_input = bpy.props.StringProperty(name="", default="", description="Path to the studiomdl.exe file", update=onGameManualTextInputChanged)
         onGameManualTextInputChanged(None, bpy.context) # need to update once to let the program know of the default value
     
-    bpy.utils.register_class(AutoMDLOperator)
-    bpy.utils.register_class(AutoMDLPanel)
     
 def unregister():
-    bpy.utils.unregister_module(__name__)
-    bpy.utils.unregister_class(AutoMDLOperator)
-    bpy.utils.unregister_class(AutoMDLPanel)
+    from bpy.utils import unregister_class
+    for cls in reversed(classes):
+        unregister_class(cls)
+    
     del bpy.types.Scene.surfaceprop_text_input
     del bpy.types.Scene.vis_mesh
     del bpy.types.Scene.phy_mesh
@@ -666,7 +670,6 @@ def unregister():
     del bpy.types.Scene.studiomdl_manual_input
     
     # cdmaterials list
-    class_unregister()
     del bpy.types.Scene.cdmaterials_list
     del bpy.types.Scene.cdmaterials_list_active_index
 
