@@ -47,9 +47,6 @@ def defineGameSelectDropdown(self, context):
         items = game_select_items_enum,
         update = onGameDropdownChanged
     )
-    
-    # set default value to prefer certain branches instead of literally just the first item in the list
-    #bpy.context.scene.game_select = # do we actually need to do this?
 
 def onGameDropdownChanged(self, context):
     setGamePath(self, context, context.scene.game_select)
@@ -178,8 +175,10 @@ class AutoMDLOperator(bpy.types.Operator):
     
     def execute(self, context):
         
+        blend_path = bpy.data.filepath
+        
         # check if we have saved a blend file in the first place
-        if (len(bpy.data.filepath) == 0):
+        if (len(blend_path) == 0):
             self.report({'ERROR'}, "Please save the project inside a models folder")
             return {'CANCELLED'}
         
@@ -214,8 +213,9 @@ class AutoMDLOperator(bpy.types.Operator):
             return {'CANCELLED'}
         
         mesh_ext = "smd"
-        blend_path = bpy.data.filepath
         qc_path = os.path.join(temp_path, "qc.qc")
+        
+        
         qc_modelpath = to_models_relative_path(blend_path)
         
         if(qc_modelpath is None):
@@ -233,6 +233,7 @@ class AutoMDLOperator(bpy.types.Operator):
             self.report({'ERROR'}, "Mass is invalid")
             return {'CANCELLED'}
         
+        # wait do we need this check? shouldn't it be compared with None instead
         if(qc_modelpath == -1):
             self.report({'ERROR'}, "blend file must be inside a models folder")
             return {'CANCELLED'}
@@ -254,10 +255,18 @@ class AutoMDLOperator(bpy.types.Operator):
         qc_surfaceprop = context.scene.surfaceprop
         
         qc_cdmaterials_list = []
-        for i in range(len(context.scene.cdmaterials_list)):
-            str = context.scene.cdmaterials_list[i].name
-            str = os.path.join(str, '', '').replace("\\", "/")
+        
+        if context.scene.cdmaterials_type == '1':
+            # manual
+            for i in range(len(context.scene.cdmaterials_list)):
+                str = context.scene.cdmaterials_list[i].name
+                str = os.path.join(str, '', '').replace("\\", "/")
+                qc_cdmaterials_list.append(str)
+        else:
+            # auto
+            str = "models/" + os.path.dirname(qc_modelpath)
             qc_cdmaterials_list.append(str)
+        
         
         qc_concave = convex_pieces > 1
         qc_maxconvexpieces = convex_pieces
@@ -350,15 +359,16 @@ class AutoMDLOperator(bpy.types.Operator):
         
         
         # delete temp folder contents
-        for filename in os.listdir(temp_path): 
-            file_path = os.path.join(temp_path, filename)  
-            try:
-                if os.path.isfile(file_path):
-                    os.remove(file_path)  
-                elif os.path.isdir(file_path):
-                    os.rmdir(file_path)
-            except Exception as e:  
-                print(f"Error deleting {file_path}: {e}")
+        if True:
+            for filename in os.listdir(temp_path): 
+                file_path = os.path.join(temp_path, filename)  
+                try:
+                    if os.path.isfile(file_path):
+                        os.remove(file_path)  
+                    elif os.path.isdir(file_path):
+                        os.rmdir(file_path)
+                except Exception as e:  
+                    print(f"Error deleting {file_path}: {e}")
         
         self.report({'INFO'}, f"If compile was successful, output should be in \"{os.path.join(move_path, '')}\"")
         return {'FINISHED'}
@@ -510,7 +520,7 @@ class AutoMDLPanel(bpy.types.Panel):
                 if context.scene.cdmaterials_type == '0':
                     if len(bpy.data.filepath) != 0:
                         if vis_mesh_valid:
-                            modelpath = to_models_relative_path(bpy.data.filepath)
+                            modelpath = os.path.dirname(to_models_relative_path(bpy.data.filepath))
                             for slot in context.scene.vis_mesh.material_slots:
                                 row = layout.row()
                                 row.label(text=os.path.join("materials/models/", modelpath, slot.name).replace("\\", "/") + ".vmt", icon='MATERIAL')
@@ -553,7 +563,7 @@ classes = [
 class_register, class_unregister = bpy.utils.register_classes_factory(classes)
 
 def register():
-
+    #print("\n\n\n\n\n\n\n\n\n\n")
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
@@ -636,6 +646,7 @@ def register():
     
     global steam_path
     global games_paths_list
+    global game_select_method_is_dropdown
     steam_path = getSteamInstallationPath()
     if(steam_path != None):
         game_select_method_is_dropdown = True
@@ -660,7 +671,7 @@ def set_default_values():
     global game_select_method_is_dropdown
     if game_select_method_is_dropdown:
         # we need to update the dropdown once to let the default value affect the rest of the program, as if we selected it manually
-        onGameDropdownChanged(None, context)
+        onGameDropdownChanged(None, bpy.context)
     else:
         # need to update once to let the program know of the default value
         onGameManualTextInputChanged(None, bpy.context)
@@ -678,9 +689,13 @@ def unregister():
     del bpy.types.Scene.staticprop
     del bpy.types.Scene.mostlyopaque
     del bpy.types.Scene.mass_text_input
-    del bpy.types.Scene.game_select
+    
+    if game_select_method_is_dropdown:
+        del bpy.types.Scene.game_select
+    else:
+        del bpy.types.Scene.studiomdl_manual_input
+    
     del bpy.types.Scene.cdmaterials_type
-    del bpy.types.Scene.studiomdl_manual_input
     
     # cdmaterials list
     del bpy.types.Scene.cdmaterials_list
