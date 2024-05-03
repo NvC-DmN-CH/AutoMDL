@@ -21,6 +21,7 @@ import winreg
 from bl_ui.generic_ui_list import draw_ui_list
 import threading
 
+game_select_method_is_dropdown = None
 temp_path = bpy.app.tempdir
 games_paths_list = []
 game_path = None
@@ -49,9 +50,6 @@ def defineGameSelectDropdown(self, context):
     
     # set default value to prefer certain branches instead of literally just the first item in the list
     #bpy.context.scene.game_select = # do we actually need to do this?
-    
-    # we need to update the dropdown once to let the default value affect the rest of the program, as if we selected it manually
-    onGameDropdownChanged(None, context)
 
 def onGameDropdownChanged(self, context):
     setGamePath(self, context, context.scene.game_select)
@@ -640,13 +638,15 @@ def register():
     global games_paths_list
     steam_path = getSteamInstallationPath()
     if(steam_path != None):
+        game_select_method_is_dropdown = True
         steam_path = os.path.join(steam_path, "").replace("\\", "/")
         games_paths_list = getGamesList()
         defineGameSelectDropdown(None, bpy.context)
     else:
+        game_select_method_is_dropdown = False
         steam_path = None
         bpy.types.Scene.studiomdl_manual_input = bpy.props.StringProperty(name="", default="", description="Path to the studiomdl.exe file", update=onGameManualTextInputChanged)
-        onGameManualTextInputChanged(None, bpy.context) # need to update once to let the program know of the default value
+        
     
     
     bpy.app.timers.register(set_default_values, first_interval=1) # workaround for not being able to use context in register()
@@ -656,6 +656,14 @@ def set_default_values():
     bpy.context.scene.cdmaterials_list.clear()
     bpy.ops.uilist.entry_add(list_path="scene.cdmaterials_list", active_index_path="scene.cdmaterials_list_active_index")
     bpy.context.scene.cdmaterials_list[0].name = "models/"
+    
+    global game_select_method_is_dropdown
+    if game_select_method_is_dropdown:
+        # we need to update the dropdown once to let the default value affect the rest of the program, as if we selected it manually
+        onGameDropdownChanged(None, context)
+    else:
+        # need to update once to let the program know of the default value
+        onGameManualTextInputChanged(None, bpy.context)
 
 
 def unregister():
