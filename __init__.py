@@ -635,10 +635,6 @@ def register():
     bpy.types.Scene.cdmaterials_list = bpy.props.CollectionProperty(type=CdMaterialsPropGroup)
     bpy.types.Scene.cdmaterials_list_active_index = bpy.props.IntProperty()
     
-    # set default
-    bpy.context.scene.cdmaterials_list.clear()
-    bpy.ops.uilist.entry_add(list_path="scene.cdmaterials_list", active_index_path="scene.cdmaterials_list_active_index")
-    bpy.context.scene.cdmaterials_list[0].name = "models/"
     
     global steam_path
     global games_paths_list
@@ -653,6 +649,15 @@ def register():
         onGameManualTextInputChanged(None, bpy.context) # need to update once to let the program know of the default value
     
     
+    bpy.app.timers.register(set_default_values, first_interval=1) # workaround for not being able to use context in register()
+
+def set_default_values():
+    # set default of cdmaterials list
+    bpy.context.scene.cdmaterials_list.clear()
+    bpy.ops.uilist.entry_add(list_path="scene.cdmaterials_list", active_index_path="scene.cdmaterials_list_active_index")
+    bpy.context.scene.cdmaterials_list[0].name = "models/"
+
+
 def unregister():
     from bpy.utils import unregister_class
     for cls in reversed(classes):
