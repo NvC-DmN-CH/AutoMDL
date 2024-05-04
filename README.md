@@ -78,7 +78,7 @@ Some details: Automatically detects whether the collision should be $concave or 
 
 ## Misc:
 - For convenience, it also makes the appropriate folders in materials, and makes placeholder VMTs if none exist. This can be disabled in the addon preferences
-- Should automatically detect all source engine games installed in steam, and put them in the dropdown to easily choose a compiler from. But if that detection fails it will prompt you to manually input the path to a bin folder containing studiomdl.exe
+- Should automatically detect all source engine games installed in steam, and put them in the dropdown to easily choose a compiler from. But if that detection fails it will prompt you to manually input the path to a bin folder containing studiomdl.exe **(this should ideally never happen, if it does then please make an [issue](https://github.com/NvC-DmN-CH/AutoMDL/issues))**
 
 <br />
 
