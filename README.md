@@ -1,23 +1,33 @@
 
+# Installation:
+In Blender:
+- Go to `Edit` > `Preferences`
+- Go to the `Add-ons` tab
+- Click `Install...` in the top-right of the window
+- Download & select the `AutoMDL-main.zip`, then click `Install Add-on`
+- Enable the checkbox to the left of the addon name
 
-# Fast iteration thanks to Hammer++'s hotloading ability
+<br />    
+
+# Fast iteration thanks to Hammer++'s hotloading ability:
 
 <img src="https://cdn.discordapp.com/attachments/1131362438227431428/1236395804013494414/automdl_showcase.gif?ex=6637dad2&is=66368952&hm=a88cf810cc26153735a8a61439ee54dc1736b43c5bf9b169d2c4cc1602cfa3cd&" width="850"/>
 
 <br />
 
-# Simplify workflow, as if the engine reads .blend files
+# Simplify workflow, as if the engine reads .blend files:
 
 ![compiling_showcase](https://github.com/NvC-DmN-CH/AutoMDL/assets/56874047/08823113-c867-47f7-a8df-f83e307508d4)
 
 ---
 
-# Where in blender:
-AutoMDL tab will appear in the Sidebar (press N)
+# Where the addon appears:
+The AutoMDL tab will appear in the Sidebar (press N)
 
----
 
-# How:
+<br />
+
+# How to use:
 
 - Save .blend file anywhere in `models`
 
@@ -61,14 +71,15 @@ You can also define a different search path if needed (or multiple):
 <br />
 
 ## Todo:
--	<sup>This is my first addon and my first time coding in python so the code is so so bad</sup>
+<sub>This is my first addon and my first time coding in python so the code is so so bad</sup>
+
 - I couldn't figure out how to add linux support
 - Currently exporting freezes the UI because it waits for studiomdl.exe to finish
 - No support for skins, bodygroups, lods, or anything else yet really
 
 <br />
 
-## Note:
+## Note
 - I made this for environment props in mind, for now anything else is beyond the scope of this addon, sorry!
 
 Hopefully this addon inspires change in other more sophisticated tools to do things in a similar way
