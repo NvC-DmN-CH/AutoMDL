@@ -637,7 +637,7 @@ class AutoMDLPanel(bpy.types.Panel):
                         else:
                             row.label(text="Blend file is not inside a models folder", icon='ERROR')
                     else:
-                        row.label(text="Please save blend file in a models folder", icon='ERROR')
+                        row.label(text="Blend file not saved", icon='ERROR')
                 else:
                     draw_ui_list(
                         layout,
