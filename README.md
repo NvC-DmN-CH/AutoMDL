@@ -80,13 +80,13 @@ You can also define a different search path if needed (or multiple):
 
 - I couldn't figure out how to add linux support
 - Currently exporting freezes the UI because it waits for studiomdl.exe to finish
-- No support for skins, bodygroups, lods, or anything else yet really
+- No support for skins, bodygroups, lods, bones, or anything else yet really. This is just for making making static and physics props (dynamic too)
 
 For suggestions or bugs, please make an [issue](https://github.com/NvC-DmN-CH/AutoMDL/issues)
 
 <br />
 
 ## Note
-- I made this for environment props in mind, for now anything else is beyond the scope of this addon, sorry!
+- I made this for props in mind, for now anything else is beyond the scope of this addon, sorry!
 
 Hopefully this addon inspires change in other more sophisticated tools to do things in a similar way
