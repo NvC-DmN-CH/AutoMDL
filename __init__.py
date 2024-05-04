@@ -383,8 +383,10 @@ class AutoMDLOperator(bpy.types.Operator):
                 entry = qc_cdmaterials_list[i]
                 root = os.path.dirname(get_models_path(blend_path))
                 fullpath = Path(os.path.join(root, "materials", entry).replace("\\", "/"))
-                #print(fullpath)
-                os.mkdir(fullpath)
+                try:
+                    os.mkdir(fullpath)
+                except:
+                    pass
         
         self.report({'INFO'}, f"If compile was successful, output should be in \"{os.path.join(move_path, '')}\"")
         return {'FINISHED'}
@@ -669,8 +671,10 @@ def register():
     for cls in classes:
         register_class(cls)
     
+    # surfaceprop dropdown
     bpy.types.Scene.surfaceprop_text_input = bpy.props.StringProperty(name="", default="")
     
+    # mass text input
     bpy.types.Scene.mass_text_input = bpy.props.StringProperty(name="", default="35", description="Mass in kilograms (KG)\nBy default, the Player can +USE pick up 35KG max.\nThe gravgun can pick up 250KG max.\nThe portal gun can pick up 85KG max", update=onMassTextInputChanged)
     
     # vis mesh
@@ -720,19 +724,21 @@ def register():
         ]
     )
     
+    # static prop
     bpy.types.Scene.staticprop = bpy.props.BoolProperty(
         name="Static Prop",
         description="Enable if used as prop_static\n($staticprop in QC)",
         default=False
     )
     
+    # has transparency
     bpy.types.Scene.mostlyopaque = bpy.props.BoolProperty(
         name="Has Transparency",
         description="Enabling this may fix sorting issues that come with using transparent materials. \nRenders model in 2 passes, one for opaque materials, and one for materials with transparency\n($mostlyopaque in QC)",
         default=False
     )
     
-    
+    # radio buttons for choosing how to define cdmaterials
     bpy.types.Scene.cdmaterials_type = bpy.props.EnumProperty(items =
         (
             ('0','Same as MDL',''),
@@ -744,7 +750,7 @@ def register():
     bpy.types.Scene.cdmaterials_list = bpy.props.CollectionProperty(type=CdMaterialsPropGroup)
     bpy.types.Scene.cdmaterials_list_active_index = bpy.props.IntProperty()
     
-    
+    # steam path
     global steam_path
     global games_paths_list
     global game_select_method_is_dropdown
@@ -760,7 +766,7 @@ def register():
         bpy.types.Scene.studiomdl_manual_input = bpy.props.StringProperty(name="", default="", description="Path to the studiomdl.exe file", update=onGameManualTextInputChanged)
         
     
-    
+    # call something after 1 second
     bpy.app.timers.register(set_default_values, first_interval=1) # workaround for not being able to use context in register()
 
 def set_default_values():
@@ -772,6 +778,7 @@ def set_default_values():
     global game_select_method_is_dropdown
     if game_select_method_is_dropdown:
         # we need to update the dropdown once to let the default value affect the rest of the program, as if we selected it manually
+        # bpy.context.scene.game_select. # todo: prefer selection
         onGameDropdownChanged(None, bpy.context)
     else:
         # need to update once to let the program know of the default value
@@ -798,7 +805,6 @@ def unregister():
     
     del bpy.types.Scene.cdmaterials_type
     
-    # cdmaterials list
     del bpy.types.Scene.cdmaterials_list
     del bpy.types.Scene.cdmaterials_list_active_index
 
