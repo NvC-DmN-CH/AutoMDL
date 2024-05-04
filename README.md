@@ -66,12 +66,17 @@ You can also define a different search path if needed (or multiple):
 
 ---
 
+You can compile without a collision model, but more options appear if you choose a mesh for it:
+
+![image](https://github.com/NvC-DmN-CH/AutoMDL/assets/56874047/0d9ca857-4a03-446e-b09d-b472b6660947)
+
+
+Some details: Automatically detects whether the collision is $concave or not, and counts loose parts to set the correct amount of $maxconvexpieces
+
 
 ## Misc:
-- It's fine to compile without a collision model
-- Automatically detects whether the collision is $concave or not, and counts loose parts to set the correct amount of $maxconvexpieces
-- Should automatically detect all source engine games installed in steam, and put them in the dropdown to easily choose a compiler from. But if that detection fails it will prompt you to manually input the path to a bin folder containing studiomdl.exe
 - For convenience, it also makes the appropriate folders and placeholder VMTs if they don't exist, this can be disabled in the addon preferences
+- Should automatically detect all source engine games installed in steam, and put them in the dropdown to easily choose a compiler from. But if that detection fails it will prompt you to manually input the path to a bin folder containing studiomdl.exe
 
 <br />
 
