@@ -49,7 +49,7 @@ By default, the materials search path mirrors the blend path:
 - mdl compiles at `models/c17/post.mdl`
 - engine will look for materials in `materials/models/c17/`
 
-Shows exactly where the VMTs are expected:
+Shows exactly where the VMTs are expected to be:
 
 ![image](https://github.com/NvC-DmN-CH/AutoMDL/assets/56874047/a7fc3ac1-bd89-43dd-b2e6-a8ac54b2c22c)
 
