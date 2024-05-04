@@ -834,7 +834,7 @@ def set_default_values():
             if "2" in game_path_lowercase:
                 if "half" in game_path_lowercase:
                     if "life" in game_path_lowercase:
-                        # we are gonna assume its "Half-Life 2" or something like that
+                        # we are gonna assume its "Half-Life 2" or something like that (episodes, lost coast etc)
                         recognized_game_path_hl2 = game_path
                         continue
             
@@ -845,11 +845,11 @@ def set_default_values():
                     continue
         
         # lets now define some sort of order so that we prefer some recognized games over others
-        # hl2 > sdk > gmod
-        if recognized_game_path_hl2 is not None:
-            chosen_game_path = recognized_game_path_hl2
-        elif recognized_game_path_sdk is not None:
+        # sdk > hl2 > gmod
+        if recognized_game_path_sdk is not None:
             chosen_game_path = recognized_game_path_sdk
+        elif recognized_game_path_hl2 is not None:
+            chosen_game_path = recognized_game_path_hl2
         elif recognized_game_path_gmod is not None:
             chosen_game_path = recognized_game_path_gmod   
         
