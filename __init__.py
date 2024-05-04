@@ -644,7 +644,7 @@ class CdMaterialsPropGroup(bpy.types.PropertyGroup):
 
 class AddonPrefs(bpy.types.AddonPreferences):
     bl_idname = __package__
-    do_make_folders_for_cdmaterials = bpy.props.BoolProperty(
+    do_make_folders_for_cdmaterials: bpy.props.BoolProperty(
         name="Automatically make folders for materials locations",
         description="On compile, make the appropriate folders in the materials folder (make folders for each $cdmaterials)",
         default=True
