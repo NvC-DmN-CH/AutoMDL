@@ -22,6 +22,8 @@ In Blender:
 
 # Simplify workflow, as if the engine reads .blend files:
 
+All the setup needed is that the blend file is inside the models folder!
+
 ![compiling_showcase](https://github.com/NvC-DmN-CH/AutoMDL/assets/56874047/08823113-c867-47f7-a8df-f83e307508d4)
 
 ---
