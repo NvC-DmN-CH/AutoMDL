@@ -1,4 +1,6 @@
 
+*Requires Blender 4*
+
 # Installation:
 In this page:
 - The green `<> Code` button at the top of the page -> `Download Zip`
