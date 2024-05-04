@@ -809,6 +809,10 @@ def set_default_values():
         
         # if certain games exist, select one of them instead of defaulting to selecting the game in the first option
         chosen_game_path = None
+        recognized_game_path_gmod = None
+        recognized_game_path_hl2 = None
+        recognized_game_path_sdk = None
+        
         global games_paths_list
         for i in range(len(games_paths_list)):
             game_path = str(games_paths_list[i])
@@ -820,25 +824,34 @@ def set_default_values():
             # 
             # checking smaller strings first for optimization (but not if its gonna be a very common string)
             
-#            if "mod" in game_path_lowercase:
-#                if "s" in game_path_lowercase:
-#                    if "garry" in game_path_lowercase:
-#                        # we are gonna assume its "GarrysMod" or something like that
-#                        chosen_game_path = game_path
-#                        break
+            if "mod" in game_path_lowercase:
+                if "s" in game_path_lowercase:
+                    if "garry" in game_path_lowercase:
+                        # we are gonna assume its "GarrysMod" or something like that
+                        recognized_game_path_gmod = game_path
+                        continue
             
             if "2" in game_path_lowercase:
                 if "half" in game_path_lowercase:
                     if "life" in game_path_lowercase:
                         # we are gonna assume its "Half-Life 2" or something like that
-                        chosen_game_path = game_path
-                        break
+                        recognized_game_path_hl2 = game_path
+                        continue
             
             if "sdk" in game_path_lowercase:
                 if "2013" in game_path_lowercase:
                     # we are gonna assume its "Source SDK Base 2013 Singleplayer" or something like that
-                    chosen_game_path = game_path
-                    break
+                    recognized_game_path_sdk = game_path
+                    continue
+        
+        # lets now define some sort of order so that we prefer some recognized games over others
+        # hl2 > sdk > gmod
+        if recognized_game_path_hl2 is not None:
+            chosen_game_path = recognized_game_path_hl2
+        elif recognized_game_path_sdk is not None:
+            chosen_game_path = recognized_game_path_sdk
+        elif recognized_game_path_gmod is not None:
+            chosen_game_path = recognized_game_path_gmod   
         
         # set value
         if chosen_game_path != None:
