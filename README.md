@@ -34,7 +34,7 @@ The AutoMDL tab will appear in the Sidebar (press N)
 
 # How to use:
 
-- Save .blend file anywhere in `models`
+- Save .blend file anywhere in a models folder
 
 - Select a visual mesh and hit `Update MDL`
 
