@@ -645,17 +645,15 @@ class CdMaterialsPropGroup(bpy.types.PropertyGroup):
 class AddonPrefs(bpy.types.AddonPreferences):
     bl_idname = __package__
     do_make_folders_for_cdmaterials = bpy.props.BoolProperty(
-        name="On compile, make folders in the materials folder",
-        description="",
+        name="Automatically make folders for materials locations",
+        description="On compile, make the appropriate folders in the materials folder (make folders for each $cdmaterials)",
         default=True
     )
     
     def draw(self, context):
-        print("wawa\n")
         layout = self.layout
         row = layout.row()
-        row.prop
-        self.layout.prop(self, "do_make_folders_for_cdmaterials")
+        row.prop(self, "do_make_folders_for_cdmaterials", text="Automatically make folders for materials locations")
 
 classes = [
     AutoMDLOperator,
