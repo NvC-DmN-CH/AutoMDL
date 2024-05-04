@@ -396,7 +396,7 @@ class AutoMDLOperator(bpy.types.Operator):
                     if context.scene.cdmaterials_type == '0': # if "Same as MDL" is selected
                         # here qc_cdmaterials_list will contain only 1 item so we're good
                         for slot in context.scene.vis_mesh.material_slots:
-                            vmt_path = os.path.join(fullpath, slot.name, '.vmt')
+                            vmt_path = os.path.join(fullpath, slot.name + '.vmt')
                             
                             # don't override vmt if it already exists
                             with open(vmt_path, "a") as file:
@@ -814,7 +814,7 @@ def set_default_values():
         # if certain games exist, select one of them instead of defaulting to selecting the game in the first option
         chosen_game_path = None
         global games_paths_list
-        for i in range(games_paths_list):
+        for i in range(len(games_paths_list)):
             game_path = games_paths_list[i]
             game_path_lowercase = game_path.lower()
             
