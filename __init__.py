@@ -652,7 +652,8 @@ class AddonPrefs(bpy.types.AddonPreferences):
     
     def draw(self, context):
         layout = self.layout
-        layout.prop(self, "do_make_folders_for_cdmaterials")
+        row = layout.row()
+        row.prop(self, "do_make_folders_for_cdmaterials")
 
 classes = [
     AutoMDLOperator,
