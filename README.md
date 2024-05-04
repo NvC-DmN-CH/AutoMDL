@@ -49,24 +49,24 @@ By default, the materials search path mirrors the blend path:
 - mdl compiles at `models/c17/post.mdl`
 - engine will look for materials in `materials/models/c17/`
 
-Lists exactly where the VMTs are expected:
+Shows exactly where the VMTs are expected:
 
 ![image](https://github.com/NvC-DmN-CH/AutoMDL/assets/56874047/a7fc3ac1-bd89-43dd-b2e6-a8ac54b2c22c)
 
-(the model has 1 material called `metal`)
+(In this case, there is 1 material called `metal`)
 
 <br />
 
 <br />
 
-You can also define a different search path if needed (or multiple):
+You can also define a different search path if needed (or multiple paths):
 
 ![image](https://github.com/NvC-DmN-CH/AutoMDL/assets/56874047/426fa106-a894-4d1e-90b6-0ec98f02fc13)
 
 
 ---
 
-You can compile without a collision model, but more options appear if you choose a mesh for it:
+You can compile without a collision model. If you choose a mesh for it, collision specific options appear:
 
 ![image](https://github.com/NvC-DmN-CH/AutoMDL/assets/56874047/0d9ca857-4a03-446e-b09d-b472b6660947)
 
@@ -75,7 +75,7 @@ Some details: Automatically detects whether the collision is $concave or not, an
 
 
 ## Misc:
-- For convenience, it also makes the appropriate folders and placeholder VMTs if they don't exist, this can be disabled in the addon preferences
+- For convenience, it also makes the appropriate folders in materials, and makes placeholder VMTs if they don't exist. This can be disabled in the addon preferences
 - Should automatically detect all source engine games installed in steam, and put them in the dropdown to easily choose a compiler from. But if that detection fails it will prompt you to manually input the path to a bin folder containing studiomdl.exe
 
 <br />
