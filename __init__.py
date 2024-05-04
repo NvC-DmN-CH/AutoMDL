@@ -401,7 +401,7 @@ class AutoMDLOperator(bpy.types.Operator):
                             # don't override vmt if it already exists
                             if os.path.exists(vmt_path) is False:
                                 with open(vmt_path, "w") as file:
-                                    vmt_basetexture = os.path.join(entry, "<VTF>").replace("\\", "/")
+                                    vmt_basetexture = os.path.join(entry, "_PLACEHOLDER_").replace("\\", "/")
                                     file.write(f"VertexLitGeneric\n{{\n\t$basetexture \"{vmt_basetexture}\"\n}}")
         
         
