@@ -377,7 +377,7 @@ class AutoMDLOperator(bpy.types.Operator):
         
         
         # create appropriate folders in materials
-        make_folders = bpy.context.preferences.addons[__name__].preferences.do_make_folders_for_cdmaterials
+        make_folders = bpy.context.preferences.addons[__package__].preferences.do_make_folders_for_cdmaterials
         if has_materials and make_folders:
             for i in range(len(qc_cdmaterials_list)):
                 entry = qc_cdmaterials_list[i]
@@ -643,7 +643,7 @@ class CdMaterialsPropGroup(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
 
 class AddonPrefs(bpy.types.AddonPreferences):
-    bl_idname = __name__
+    bl_idname = __package__
     do_make_folders_for_cdmaterials = bpy.props.BoolProperty(
         name="On compile, make folders in the materials folder",
         description="",
@@ -665,7 +665,6 @@ classes = [
 class_register, class_unregister = bpy.utils.register_classes_factory(classes)
 
 def register():
-    #print("\n\n\n\n\n\n\n\n\n\n")
     from bpy.utils import register_class
     for cls in classes:
         register_class(cls)
