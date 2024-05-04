@@ -255,18 +255,19 @@ class AutoMDLOperator(bpy.types.Operator):
         qc_surfaceprop = context.scene.surfaceprop
         
         qc_cdmaterials_list = []
+        has_materials = context.scene.vis_mesh.material_slots
         
-        if context.scene.cdmaterials_type == '1':
-            # manual
-            for i in range(len(context.scene.cdmaterials_list)):
-                str = context.scene.cdmaterials_list[i].name
-                str = os.path.join(str, '', '').replace("\\", "/")
+        if has_materials:
+            if context.scene.cdmaterials_type == '1':
+                # manual
+                for i in range(len(context.scene.cdmaterials_list)):
+                    str = context.scene.cdmaterials_list[i].name
+                    str = os.path.join(str, '', '').replace("\\", "/")
+                    qc_cdmaterials_list.append(str)
+            else:
+                # auto
+                str = "models/" + os.path.dirname(qc_modelpath)
                 qc_cdmaterials_list.append(str)
-        else:
-            # auto
-            str = "models/" + os.path.dirname(qc_modelpath)
-            qc_cdmaterials_list.append(str)
-        
         
         qc_concave = convex_pieces > 1
         qc_maxconvexpieces = convex_pieces
@@ -302,6 +303,10 @@ class AutoMDLOperator(bpy.types.Operator):
             for i in range(len(qc_cdmaterials_list)):
                 str = qc_cdmaterials_list[i]
                 file.write(f"$cdmaterials \"{str}\"\n")
+            
+            if not has_materials:
+                file.write(f"$cdmaterials \"\"\n")
+            
             file.write("\n")
             file.write(f"$sequence \"idle\" {{\n\t\"{qc_vismesh}.{mesh_ext}\"\n\tfps 30\n\tfadein 0.2\n\tfadeout 0.2\n\tloop\n}}\n")
             file.write("\n")
@@ -359,7 +364,7 @@ class AutoMDLOperator(bpy.types.Operator):
         
         
         # delete temp folder contents
-        if True:
+        if False:
             for filename in os.listdir(temp_path): 
                 file_path = os.path.join(temp_path, filename)  
                 try:
@@ -369,6 +374,17 @@ class AutoMDLOperator(bpy.types.Operator):
                         os.rmdir(file_path)
                 except Exception as e:  
                     print(f"Error deleting {file_path}: {e}")
+        
+        
+        # create appropriate folders in materials
+        make_folders = bpy.context.preferences.addons[__name__].preferences.do_make_folders_for_cdmaterials
+        if has_materials and make_folders:
+            for i in range(len(qc_cdmaterials_list)):
+                entry = qc_cdmaterials_list[i]
+                root = os.path.dirname(get_models_path(blend_path))
+                fullpath = Path(os.path.join(root, "materials", entry).replace("\\", "/"))
+                #print(fullpath)
+                os.mkdir(fullpath)
         
         self.report({'INFO'}, f"If compile was successful, output should be in \"{os.path.join(move_path, '')}\"")
         return {'FINISHED'}
@@ -400,46 +416,119 @@ class AutoMDLOperator(bpy.types.Operator):
             file.write("version 1\nnodes\n0 \"root\" -1\nend\nskeleton\ntime 0\n0 0 0 0 0 0 0\nend\ntriangles\n")
             
             has_materials = len(obj.material_slots) > 0
-            material_name = "None"
             
-            for tri in mesh.loop_triangles:
-                
-                if(has_materials):
-                    material_name = obj.material_slots[tri.material_index].name
-                
-                # tri vertices
-                vert_a = mesh.vertices[tri.vertices[0]]
-                vert_b = mesh.vertices[tri.vertices[1]]
-                vert_c = mesh.vertices[tri.vertices[2]]
-                
-                # tri positions
-                pos_a = vert_a.co
-                pos_b = vert_b.co
-                pos_c = vert_c.co
-                    
-                 # tri normals
-                normal_a = vert_a.normal
-                normal_b = vert_b.normal
-                normal_c = vert_c.normal
-                
-                if(tri.use_smooth == False or is_collision_smd):
-                    normal = (pos_b - pos_a).cross(pos_c - pos_a).normalized()
-                    normal_a = normal
-                    normal_b = normal
-                    normal_c = normal
-                
-                # tri uv coords
-                uv_a = mesh.uv_layers.active.data[tri.loops[0]].uv
-                uv_b = mesh.uv_layers.active.data[tri.loops[1]].uv
-                uv_c = mesh.uv_layers.active.data[tri.loops[2]].uv
-                
-                file.write(f"{material_name}\n0  {pos_a.x:.6f} {pos_a.y:.6f} {pos_a.z:.6f}  {normal_a.x:.6f} {normal_a.y:.6f} {normal_a.z:.6f}  {uv_a.x:.6f} {uv_a.y:.6f} 0\n0  {pos_b.x:.6f} {pos_b.y:.6f} {pos_b.z:.6f}  {normal_b.x:.6f} {normal_b.y:.6f} {normal_b.z:.6f}  {uv_b.x:.6f} {uv_b.y:.6f} 0\n0  {pos_c.x:.6f} {pos_c.y:.6f} {pos_c.z:.6f}  {normal_c.x:.6f} {normal_c.y:.6f} {normal_c.z:.6f}  {uv_c.x:.6f} {uv_c.y:.6f} 0\n")
+            # okay so now, i sacrifice everything that goes into making good code
+            # just to squeeze out some performance of out this
+            # because we REALLY do need the extra boost
+            # no need to check for every triangle whether or not its a collision smd or presence of materials
+            # so we check here and call the appropriate variant of the function
+            if is_collision_smd:
+                self.exportMeshToSmd_Collision(file, mesh)
+            else:
+                if has_materials:
+                    self.exportMeshToSmd_WithMaterials(file, obj, mesh)
+                else:
+                    self.exportMeshToSmd_NoMaterials(file, mesh)
+            
             file.write("end\n")
         
         # switch mode back
         if(context_mode_snapshot != "null"):
             bpy.ops.object.mode_set(mode=context_mode_snapshot)
         
+        
+    def exportMeshToSmd_Collision(self, file, mesh):
+        for tri in mesh.loop_triangles:
+            material_name = "Phy"
+            
+            # tri vertices
+            vert_a = mesh.vertices[tri.vertices[0]]
+            vert_b = mesh.vertices[tri.vertices[1]]
+            vert_c = mesh.vertices[tri.vertices[2]]
+            
+            # tri positions
+            pos_a = vert_a.co
+            pos_b = vert_b.co
+            pos_c = vert_c.co
+              
+            # tri normals (smooth shading)
+            normal_a = vert_a.normal
+            normal_b = vert_b.normal
+            normal_c = vert_c.normal
+            
+            # tri uv coords
+            uv_a = mesh.uv_layers.active.data[tri.loops[0]].uv
+            uv_b = mesh.uv_layers.active.data[tri.loops[1]].uv
+            uv_c = mesh.uv_layers.active.data[tri.loops[2]].uv
+            
+            file.write(f"{material_name}\n0  {pos_a.x:.6f} {pos_a.y:.6f} {pos_a.z:.6f}  {normal_a.x:.6f} {normal_a.y:.6f} {normal_a.z:.6f}  {uv_a.x:.6f} {uv_a.y:.6f} 0\n0  {pos_b.x:.6f} {pos_b.y:.6f} {pos_b.z:.6f}  {normal_b.x:.6f} {normal_b.y:.6f} {normal_b.z:.6f}  {uv_b.x:.6f} {uv_b.y:.6f} 0\n0  {pos_c.x:.6f} {pos_c.y:.6f} {pos_c.z:.6f}  {normal_c.x:.6f} {normal_c.y:.6f} {normal_c.z:.6f}  {uv_c.x:.6f} {uv_c.y:.6f} 0\n")
+
+
+    def exportMeshToSmd_WithMaterials(self, file, obj, mesh):
+        for tri in mesh.loop_triangles:
+            material_name = obj.material_slots[tri.material_index].name
+            
+            # tri vertices
+            vert_a = mesh.vertices[tri.vertices[0]]
+            vert_b = mesh.vertices[tri.vertices[1]]
+            vert_c = mesh.vertices[tri.vertices[2]]
+            
+            # tri positions
+            pos_a = vert_a.co
+            pos_b = vert_b.co
+            pos_c = vert_c.co
+              
+            # tri normals
+            normal_a = vert_a.normal
+            normal_b = vert_b.normal
+            normal_c = vert_c.normal
+            
+            if(tri.use_smooth == False):
+                normal = (pos_b - pos_a).cross(pos_c - pos_a).normalized()
+                normal_a = normal
+                normal_b = normal
+                normal_c = normal
+            
+            # tri uv coords
+            uv_a = mesh.uv_layers.active.data[tri.loops[0]].uv
+            uv_b = mesh.uv_layers.active.data[tri.loops[1]].uv
+            uv_c = mesh.uv_layers.active.data[tri.loops[2]].uv
+            
+            file.write(f"{material_name}\n0  {pos_a.x:.6f} {pos_a.y:.6f} {pos_a.z:.6f}  {normal_a.x:.6f} {normal_a.y:.6f} {normal_a.z:.6f}  {uv_a.x:.6f} {uv_a.y:.6f} 0\n0  {pos_b.x:.6f} {pos_b.y:.6f} {pos_b.z:.6f}  {normal_b.x:.6f} {normal_b.y:.6f} {normal_b.z:.6f}  {uv_b.x:.6f} {uv_b.y:.6f} 0\n0  {pos_c.x:.6f} {pos_c.y:.6f} {pos_c.z:.6f}  {normal_c.x:.6f} {normal_c.y:.6f} {normal_c.z:.6f}  {uv_c.x:.6f} {uv_c.y:.6f} 0\n")
+
+
+    def exportMeshToSmd_NoMaterials(self, file, mesh):
+        for tri in mesh.loop_triangles:
+            material_name = "None"
+            
+            # tri vertices
+            vert_a = mesh.vertices[tri.vertices[0]]
+            vert_b = mesh.vertices[tri.vertices[1]]
+            vert_c = mesh.vertices[tri.vertices[2]]
+            
+            # tri positions
+            pos_a = vert_a.co
+            pos_b = vert_b.co
+            pos_c = vert_c.co
+              
+            # tri normals
+            normal_a = vert_a.normal
+            normal_b = vert_b.normal
+            normal_c = vert_c.normal
+            
+            if(tri.use_smooth == False):
+                normal = (pos_b - pos_a).cross(pos_c - pos_a).normalized()
+                normal_a = normal
+                normal_b = normal
+                normal_c = normal
+            
+            # tri uv coords
+            uv_a = mesh.uv_layers.active.data[tri.loops[0]].uv
+            uv_b = mesh.uv_layers.active.data[tri.loops[1]].uv
+            uv_c = mesh.uv_layers.active.data[tri.loops[2]].uv
+            
+            file.write(f"{material_name}\n0  {pos_a.x:.6f} {pos_a.y:.6f} {pos_a.z:.6f}  {normal_a.x:.6f} {normal_a.y:.6f} {normal_a.z:.6f}  {uv_a.x:.6f} {uv_a.y:.6f} 0\n0  {pos_b.x:.6f} {pos_b.y:.6f} {pos_b.z:.6f}  {normal_b.x:.6f} {normal_b.y:.6f} {normal_b.z:.6f}  {uv_b.x:.6f} {uv_b.y:.6f} 0\n0  {pos_c.x:.6f} {pos_c.y:.6f} {pos_c.z:.6f}  {normal_c.x:.6f} {normal_c.y:.6f} {normal_c.z:.6f}  {uv_c.x:.6f} {uv_c.y:.6f} 0\n")
+
 
 
 class AutoMDLPanel(bpy.types.Panel):
@@ -553,11 +642,23 @@ class AutoMDLPanel(bpy.types.Panel):
 class CdMaterialsPropGroup(bpy.types.PropertyGroup):
     name: bpy.props.StringProperty()
 
+class AddonPrefs(bpy.types.AddonPreferences):
+    bl_idname = __name__
+    do_make_folders_for_cdmaterials = bpy.props.BoolProperty(
+        name="On compile, make folders in the materials folder",
+        description="",
+        default=True
+    )
+    
+    def draw(self, context):
+        layout = self.layout
+        layout.prop(self, "do_make_folders_for_cdmaterials")
 
 classes = [
     AutoMDLOperator,
     AutoMDLPanel,
-    CdMaterialsPropGroup
+    CdMaterialsPropGroup,
+    AddonPrefs
 ]
 
 class_register, class_unregister = bpy.utils.register_classes_factory(classes)
@@ -722,10 +823,22 @@ def to_models_relative_path(file_path):
     if index != -1:
         root = file_path[:index + len(MODELS_FOLDER_NAME)]
     else:
-        # Alert
         return None
 
     return os.path.splitext(os.path.relpath(file_path, root))[0].replace("\\", "/")
+
+def get_models_path(file_path):
+    MODELS_FOLDER_NAME = "models"
+
+    
+    # See if we can find a models folder up the chain
+    index = file_path.rfind(MODELS_FOLDER_NAME)
+
+    if index != -1:
+        root = file_path[:index + len(MODELS_FOLDER_NAME)]
+        return root
+    
+    return None
 
 
 
