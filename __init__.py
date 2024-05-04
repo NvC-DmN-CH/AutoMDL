@@ -820,12 +820,11 @@ def set_default_values():
             # 
             # checking smaller strings first for optimization (but not if its gonna be a very common string)
             
-            if "mod" in game_path_lowercase:
-                if "s" in game_path_lowercase:
-                    if "garry" in game_path_lowercase:
-                        # we are gonna assume its "GarrysMod" or something like that
-                        chosen_game_path = game_path
-                        break
+#            if "mod" in game_path_lowercase:
+#                    if "garry" in game_path_lowercase:
+#                        # we are gonna assume its "GarrysMod" or something like that
+#                        chosen_game_path = game_path
+#                        break
             
             if "2" in game_path_lowercase:
                 if "half" in game_path_lowercase:
