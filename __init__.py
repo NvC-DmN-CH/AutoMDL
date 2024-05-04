@@ -820,11 +820,12 @@ def set_default_values():
             # 
             # checking smaller strings first for optimization (but not if its gonna be a very common string)
             
-            if "sdk" in game_path_lowercase:
-                if "2013" in game_path_lowercase:
-                    # we are gonna assume its "Source SDK Base 2013 Singleplayer" or something like that
-                    chosen_game_path = game_path
-                    break
+            if "mod" in game_path_lowercase:
+                if "s" in game_path_lowercase:
+                    if "garry" in game_path_lowercase:
+                        # we are gonna assume its "GarrysMod" or something like that
+                        chosen_game_path = game_path
+                        break
             
             if "2" in game_path_lowercase:
                 if "half" in game_path_lowercase:
@@ -833,12 +834,11 @@ def set_default_values():
                         chosen_game_path = game_path
                         break
             
-            if "mod" in game_path_lowercase:
-                if "s" in game_path_lowercase:
-                    if "garry" in game_path_lowercase:
-                        # we are gonna assume its "GarrysMod" or something like that
-                        chosen_game_path = game_path
-                        break
+            if "sdk" in game_path_lowercase:
+                if "2013" in game_path_lowercase:
+                    # we are gonna assume its "Source SDK Base 2013 Singleplayer" or something like that
+                    chosen_game_path = game_path
+                    break
         
         # set value
         if chosen_game_path != None:
