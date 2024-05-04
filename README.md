@@ -80,6 +80,8 @@ You can also define a different search path if needed (or multiple):
 - Currently exporting freezes the UI because it waits for studiomdl.exe to finish
 - No support for skins, bodygroups, lods, or anything else yet really
 
+For suggestions or bugs, please make an [issue](https://github.com/NvC-DmN-CH/AutoMDL/issues)
+
 <br />
 
 ## Note
