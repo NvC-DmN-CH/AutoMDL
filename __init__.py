@@ -812,7 +812,7 @@ def set_default_values():
         chosen_game_path = None
         global games_paths_list
         for i in range(len(games_paths_list)):
-            game_path = games_paths_list[i]
+            game_path = str(games_paths_list[i])
             game_path_lowercase = game_path.lower()
             
             # we're not checking for specific strings because from what i saw the names of the games aren't consistent across users
