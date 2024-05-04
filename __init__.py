@@ -627,13 +627,17 @@ class AutoMDLPanel(bpy.types.Panel):
                 
                 if context.scene.cdmaterials_type == '0':
                     if len(bpy.data.filepath) != 0:
-                        if vis_mesh_valid:
-                            modelpath = os.path.dirname(to_models_relative_path(bpy.data.filepath))
-                            for slot in context.scene.vis_mesh.material_slots:
-                                row = layout.row()
-                                row.label(text=os.path.join("materials/models/", modelpath, slot.name).replace("\\", "/") + ".vmt", icon='MATERIAL')
+                        modelpath = to_models_relative_path(bpy.data.filepath)
+                        if modelpath != None:
+                            if vis_mesh_valid:
+                                modelpath_dirname = os.path.dirname(modelpath)
+                                for slot in context.scene.vis_mesh.material_slots:
+                                    row = layout.row()
+                                    row.label(text=os.path.join("materials/models/", modelpath_dirname, slot.name).replace("\\", "/") + ".vmt", icon='MATERIAL')
+                        else:
+                            row.label(text="Blend file is not inside a models folder", icon='ERROR')
                     else:
-                        row.label(text="Blend file is not inside a models folder", icon='ERROR')
+                        row.label(text="Save Blend file inside a models folder", icon='ERROR')
                 else:
                     draw_ui_list(
                         layout,
