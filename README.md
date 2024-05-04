@@ -61,13 +61,14 @@ You can also define a different search path if needed (or multiple):
 <br />
 
 ## Todo:
+-	<sup>This is my first addon and my first time coding in python so the code is so so bad</sup>
 - I couldn't figure out how to add linux support
 - Currently exporting freezes the UI because it waits for studiomdl.exe to finish
 - No support for skins, bodygroups, lods, or anything else yet really
 
 <br />
 
-# Note:
+## Note:
 - I made this for environment props in mind, for now anything else is beyond the scope of this addon, sorry!
 
 Hopefully this addon inspires change in other more sophisticated tools to do things in a similar way
