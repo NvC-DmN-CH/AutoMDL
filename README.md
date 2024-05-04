@@ -1,10 +1,13 @@
 
 # Installation:
+In this page:
+- The green `<> Code` button at the top of the page -> `Download Zip`
+
 In Blender:
 - Go to `Edit` > `Preferences`
 - Go to the `Add-ons` tab
 - Click `Install...` in the top-right of the window
-- Download & select the `AutoMDL-main.zip`, then click `Install Add-on`
+- Select the `AutoMDL-main.zip`, then click `Install Add-on`
 - Enable the checkbox to the left of the addon name
 
 <br />    
