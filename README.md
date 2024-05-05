@@ -22,7 +22,7 @@ In Blender:
 
 # Simplify workflow, as if the engine reads .blend files:
 
-All the setup needed is that the blend file is inside the models folder!
+All the setup needed is that the .blend needs to be inside a models folder, or any subdirectory inside it!
 
 ![compiling_showcase](https://github.com/NvC-DmN-CH/AutoMDL/assets/56874047/08823113-c867-47f7-a8df-f83e307508d4)
 
