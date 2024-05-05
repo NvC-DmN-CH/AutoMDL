@@ -27,6 +27,7 @@ games_paths_list = []
 game_path = None
 steam_path = None
 studiomdl_path = None
+gameManualTextGameinfoPath = None
 gameManualTextInputIsInvalid = False
 massTextInputIsInvalid = False
 visMeshInputIsInvalid = False
@@ -49,7 +50,7 @@ def defineGameSelectDropdown(self, context):
     )
 
 def onGameDropdownChanged(self, context):
-    setGamePath(self, context, context.scene.game_select)
+    pass
 
 def onMassTextInputChanged(self, context):
     global massTextInputIsInvalid
@@ -89,7 +90,7 @@ def onGameManualTextInputChanged(self, context):
         print("ERROR: Couldn't find gameinfo.txt in game")
         return
     
-    setGamePath(self, context, gameinfo_path)
+    gameManualTextGameinfoPath = gameinfo_path
 
 
 def setGamePath(self, context, new_game_path_value):
@@ -174,6 +175,11 @@ class AutoMDLOperator(bpy.types.Operator):
     
     
     def execute(self, context):
+        
+        if game_select_method_is_dropdown:
+            setGamePath(self, context, context.scene.game_select)
+        else:
+            setGamePath(self, context, gameManualTextGameinfoPath)
         
         blend_path = bpy.data.filepath
         
@@ -861,10 +867,10 @@ def set_default_values():
         if chosen_game_path != None:
             bpy.context.scene.game_select = chosen_game_path
         
-        # update
+        # update once to set up things ( i removed functionality there so not needed anymore )
         onGameDropdownChanged(None, bpy.context)
     else:
-        # need to update once to let the program know of the default value
+        # update once to set up things
         onGameManualTextInputChanged(None, bpy.context)
 
 
