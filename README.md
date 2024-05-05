@@ -87,6 +87,7 @@ Some details: Automatically detects whether the collision should be $concave or 
 
 - I couldn't figure out how to add linux support
 - Currently exporting freezes the UI because it waits for studiomdl.exe to finish
+- It would be really cool if it could open compiled models
 - No support for skins, bodygroups, lods, bones, or anything else yet really. This is just for making making static and physics props (dynamic too) since that's what I need the addon for.
 
 But if you have a suggestion or a bug, do make an [issue](https://github.com/NvC-DmN-CH/AutoMDL/issues)
