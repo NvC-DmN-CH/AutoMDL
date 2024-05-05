@@ -85,7 +85,7 @@ Some details: Automatically detects whether the collision should be $concave or 
 ## Todo:
 <sub>This is my first addon and my first time coding in python so the code is so so bad</sup>
 
-- I couldn't figure out how to add linux support
+- I couldn't figure out how to add proper linux support, but apparently it should work under proton
 - Currently exporting freezes the UI because it waits for studiomdl.exe to finish
 - It would be really cool if it could open compiled models
 - No support for skins, bodygroups, lods, bones, or anything else yet really. This is just for making making static and physics props (dynamic too) since that's what I need the addon for.
