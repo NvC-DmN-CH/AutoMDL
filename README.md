@@ -94,6 +94,6 @@ But if you have a suggestion or a bug, do make an [issue](https://github.com/NvC
 <br />
 
 ## Note
-- I made this for making props in mind, for now anything else like characters is beyond the scope of this addon, sorry! (at least not planned yet, but could be improved)
+- I made this for making props in mind, for now anything else like characters is beyond the scope of this addon, sorry! (more isn't planned yet at least)
 
 Hopefully this addon inspires change in other more sophisticated tools to do things in a similar way
