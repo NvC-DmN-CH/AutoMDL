@@ -3,7 +3,7 @@
 
 # Installation:
 In this page:
-- The green `<> Code` button at the top of the page -> `Download Zip`
+- Click the green `<> Code` button at the top of the page -> `Download Zip`
 
 In Blender:
 - Go to `Edit` > `Preferences`
@@ -85,8 +85,9 @@ Some details: Automatically detects whether the collision should be $concave or 
 ## Todo:
 <sub>This is my first addon and my first time coding in python so the code is so so bad</sup>
 
-- I couldn't figure out how to add linux support
+- I couldn't figure out how to add proper linux support, but apparently it should work under proton
 - Currently exporting freezes the UI because it waits for studiomdl.exe to finish
+- It would be really cool if it could open compiled models
 - No support for skins, bodygroups, lods, bones, or anything else yet really. This is just for making making static and physics props (dynamic too) since that's what I need the addon for.
 
 But if you have a suggestion or a bug, do make an [issue](https://github.com/NvC-DmN-CH/AutoMDL/issues)
@@ -94,6 +95,6 @@ But if you have a suggestion or a bug, do make an [issue](https://github.com/NvC
 <br />
 
 ## Note
-- I made this for making props in mind, for now anything else like characters is beyond the scope of this addon, sorry! (more isn't planned yet at least)
+- I made this for making props in mind, for now anything else like characters is beyond the scope of this addon, sorry! (may add more features in the future though)
 
 Hopefully this addon inspires change in other more sophisticated tools to do things in a similar way
