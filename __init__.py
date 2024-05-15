@@ -20,6 +20,7 @@ import mathutils
 import winreg
 from bl_ui.generic_ui_list import draw_ui_list
 import threading
+from io import StringIO
 
 game_select_method_is_dropdown = None
 temp_path = bpy.app.tempdir
@@ -440,6 +441,7 @@ class AutoMDLOperator(bpy.types.Operator):
             # hardcoded but yea
             file.write("version 1\nnodes\n0 \"root\" -1\nend\nskeleton\ntime 0\n0 0 0 0 0 0 0\nend\ntriangles\n")
             
+            sb = StringIO() # string builder
             has_materials = len(obj.material_slots) > 0
             
             # okay so now, i sacrifice everything that goes into making good code
@@ -448,13 +450,14 @@ class AutoMDLOperator(bpy.types.Operator):
             # no need to check for every triangle whether or not its a collision smd or presence of materials
             # so we check here and call the appropriate variant of the function
             if is_collision_smd:
-                self.exportMeshToSmd_Collision(file, mesh)
+                self.exportMeshToSmd_Collision(sb, mesh)
             else:
                 if has_materials:
-                    self.exportMeshToSmd_WithMaterials(file, obj, mesh)
+                    self.exportMeshToSmd_WithMaterials(sb, obj, mesh)
                 else:
-                    self.exportMeshToSmd_NoMaterials(file, mesh)
+                    self.exportMeshToSmd_NoMaterials(sb, mesh)
             
+            file.write(sb.getvalue())
             file.write("end\n")
         
         # switch mode back
@@ -462,7 +465,7 @@ class AutoMDLOperator(bpy.types.Operator):
             bpy.ops.object.mode_set(mode=context_mode_snapshot)
         
         
-    def exportMeshToSmd_Collision(self, file, mesh):
+    def exportMeshToSmd_Collision(self, sb, mesh):
         for tri in mesh.loop_triangles:
             material_name = "Phy"
             
@@ -486,10 +489,10 @@ class AutoMDLOperator(bpy.types.Operator):
             uv_b = mesh.uv_layers.active.data[tri.loops[1]].uv
             uv_c = mesh.uv_layers.active.data[tri.loops[2]].uv
             
-            file.write(f"{material_name}\n0  {pos_a.x:.6f} {pos_a.y:.6f} {pos_a.z:.6f}  {normal_a.x:.6f} {normal_a.y:.6f} {normal_a.z:.6f}  {uv_a.x:.6f} {uv_a.y:.6f} 0\n0  {pos_b.x:.6f} {pos_b.y:.6f} {pos_b.z:.6f}  {normal_b.x:.6f} {normal_b.y:.6f} {normal_b.z:.6f}  {uv_b.x:.6f} {uv_b.y:.6f} 0\n0  {pos_c.x:.6f} {pos_c.y:.6f} {pos_c.z:.6f}  {normal_c.x:.6f} {normal_c.y:.6f} {normal_c.z:.6f}  {uv_c.x:.6f} {uv_c.y:.6f} 0\n")
+            sb.write(f"{material_name}\n0  {pos_a.x:.6f} {pos_a.y:.6f} {pos_a.z:.6f}  {normal_a.x:.6f} {normal_a.y:.6f} {normal_a.z:.6f}  {uv_a.x:.6f} {uv_a.y:.6f} 0\n0  {pos_b.x:.6f} {pos_b.y:.6f} {pos_b.z:.6f}  {normal_b.x:.6f} {normal_b.y:.6f} {normal_b.z:.6f}  {uv_b.x:.6f} {uv_b.y:.6f} 0\n0  {pos_c.x:.6f} {pos_c.y:.6f} {pos_c.z:.6f}  {normal_c.x:.6f} {normal_c.y:.6f} {normal_c.z:.6f}  {uv_c.x:.6f} {uv_c.y:.6f} 0\n")
 
 
-    def exportMeshToSmd_WithMaterials(self, file, obj, mesh):
+    def exportMeshToSmd_WithMaterials(self, sb, obj, mesh):
         for tri in mesh.loop_triangles:
             material_name = obj.material_slots[tri.material_index].name
             
@@ -519,10 +522,10 @@ class AutoMDLOperator(bpy.types.Operator):
             uv_b = mesh.uv_layers.active.data[tri.loops[1]].uv
             uv_c = mesh.uv_layers.active.data[tri.loops[2]].uv
             
-            file.write(f"{material_name}\n0  {pos_a.x:.6f} {pos_a.y:.6f} {pos_a.z:.6f}  {normal_a.x:.6f} {normal_a.y:.6f} {normal_a.z:.6f}  {uv_a.x:.6f} {uv_a.y:.6f} 0\n0  {pos_b.x:.6f} {pos_b.y:.6f} {pos_b.z:.6f}  {normal_b.x:.6f} {normal_b.y:.6f} {normal_b.z:.6f}  {uv_b.x:.6f} {uv_b.y:.6f} 0\n0  {pos_c.x:.6f} {pos_c.y:.6f} {pos_c.z:.6f}  {normal_c.x:.6f} {normal_c.y:.6f} {normal_c.z:.6f}  {uv_c.x:.6f} {uv_c.y:.6f} 0\n")
+            sb.write(f"{material_name}\n0  {pos_a.x:.6f} {pos_a.y:.6f} {pos_a.z:.6f}  {normal_a.x:.6f} {normal_a.y:.6f} {normal_a.z:.6f}  {uv_a.x:.6f} {uv_a.y:.6f} 0\n0  {pos_b.x:.6f} {pos_b.y:.6f} {pos_b.z:.6f}  {normal_b.x:.6f} {normal_b.y:.6f} {normal_b.z:.6f}  {uv_b.x:.6f} {uv_b.y:.6f} 0\n0  {pos_c.x:.6f} {pos_c.y:.6f} {pos_c.z:.6f}  {normal_c.x:.6f} {normal_c.y:.6f} {normal_c.z:.6f}  {uv_c.x:.6f} {uv_c.y:.6f} 0\n")
 
 
-    def exportMeshToSmd_NoMaterials(self, file, mesh):
+    def exportMeshToSmd_NoMaterials(self, sb, mesh):
         for tri in mesh.loop_triangles:
             material_name = "None"
             
@@ -552,7 +555,7 @@ class AutoMDLOperator(bpy.types.Operator):
             uv_b = mesh.uv_layers.active.data[tri.loops[1]].uv
             uv_c = mesh.uv_layers.active.data[tri.loops[2]].uv
             
-            file.write(f"{material_name}\n0  {pos_a.x:.6f} {pos_a.y:.6f} {pos_a.z:.6f}  {normal_a.x:.6f} {normal_a.y:.6f} {normal_a.z:.6f}  {uv_a.x:.6f} {uv_a.y:.6f} 0\n0  {pos_b.x:.6f} {pos_b.y:.6f} {pos_b.z:.6f}  {normal_b.x:.6f} {normal_b.y:.6f} {normal_b.z:.6f}  {uv_b.x:.6f} {uv_b.y:.6f} 0\n0  {pos_c.x:.6f} {pos_c.y:.6f} {pos_c.z:.6f}  {normal_c.x:.6f} {normal_c.y:.6f} {normal_c.z:.6f}  {uv_c.x:.6f} {uv_c.y:.6f} 0\n")
+            sb.write(f"{material_name}\n0  {pos_a.x:.6f} {pos_a.y:.6f} {pos_a.z:.6f}  {normal_a.x:.6f} {normal_a.y:.6f} {normal_a.z:.6f}  {uv_a.x:.6f} {uv_a.y:.6f} 0\n0  {pos_b.x:.6f} {pos_b.y:.6f} {pos_b.z:.6f}  {normal_b.x:.6f} {normal_b.y:.6f} {normal_b.z:.6f}  {uv_b.x:.6f} {uv_b.y:.6f} 0\n0  {pos_c.x:.6f} {pos_c.y:.6f} {pos_c.z:.6f}  {normal_c.x:.6f} {normal_c.y:.6f} {normal_c.z:.6f}  {uv_c.x:.6f} {uv_c.y:.6f} 0\n")
 
 
 
