@@ -16,7 +16,7 @@ In Blender:
 
 # Fast iteration thanks to Hammer++'s hotloading ability:
 
-<img src="https://cdn.discordapp.com/attachments/1131362438227431428/1236395804013494414/automdl_showcase.gif?ex=6637dad2&is=66368952&hm=a88cf810cc26153735a8a61439ee54dc1736b43c5bf9b169d2c4cc1602cfa3cd&" width="850"/>
+<img src="https://cdn.discordapp.com/attachments/1131362438227431428/1236395804013494414/automdl_showcase.gif?ex=66485592&is=66470412&hm=51046a33bb022d985a5fe5aa0086fad91a9f5f51cfa0a01bc3d4387ae677dbe5&" width="850"/>
 
 <br />
 
